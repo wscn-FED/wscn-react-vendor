@@ -1,10 +1,11 @@
 {
   "name": "wscn-react-vendor",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "wscn-react-vendor",
   "main": "dist/wscn-react-vendor.min",
   "scripts": {
-    "build": " node build.js"
+//    "build": " node build.js",
+    "react":"node react.build.js"
   },
   "keywords": [
     "react",
