@@ -4,7 +4,6 @@
   "description": "wscn-react-vendor",
   "main": "dist/wscn-react-vendor.min",
   "scripts": {
-//    "build": " node build.js",
     "react":"node react.build.js"
   },
   "keywords": [
@@ -36,6 +35,6 @@
     "classnames": "^2.2.5",
     "react": "^15.2.1",
     "react-dom": "^15.2.1",
-    "reqwest": "^2.0.5"
+    "axios": "^0.14.0"
   }
 }
