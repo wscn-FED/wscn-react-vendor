@@ -7,7 +7,7 @@ wscn react项目基础vendor
 * classnames
 * react
 * react-dom
-* reqwest
+* axios
 
 #dev
 npm install
