@@ -1,6 +1,6 @@
 {
   "name": "wscn-react-vendor",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "wscn-react-vendor",
   "main": "dist/wscn-react-vendor.min",
   "scripts": {
@@ -31,7 +31,7 @@
     "webpack-dashboard": "^0.1.8",
     "webpack-dev-server": "1.14.1"
   },
-  "dependencies": {
+  "peerDependencies": {
     "classnames": "^2.2.5",
     "react": "^15.3.2",
     "react-dom": "^15.3.2",
