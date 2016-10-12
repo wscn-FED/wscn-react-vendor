@@ -1,6 +1,6 @@
 {
   "name": "wscn-react-vendor",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "wscn-react-vendor",
   "main": "dist/wscn-react-vendor.min",
   "scripts": {
@@ -36,8 +36,5 @@
     "react": "^15.3.2",
     "react-dom": "^15.3.2",
     "axios": "^0.14.0"
-  },
-  "dependencies": {
-    "object-assign": "^4.1.0"
   }
 }

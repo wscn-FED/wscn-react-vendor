@@ -10,21 +10,20 @@ var nodeModulesDir = path.join(__dirname, './node_modules');
 var reactProdPath = path.join(nodeModulesDir, 'react/dist/react-with-addons.min.js');
 var reactDevPath = path.join(nodeModulesDir, 'react/dist/react-with-addons.js');
 var reactDomPath = path.join(nodeModulesDir, 'react-dom/dist/react-dom.min.js');
-var objectAssign = path.join(nodeModulesDir, 'object-assign/index.js');
 var axiosPath = path.join(nodeModulesDir, 'axios/dist/axios.min.js');
 
-var prodCode = fileUtils.concatFileContent([reactProdPath, reactDomPath,axiosPath,objectAssign]),
-    devCode = fileUtils.concatFileContent([reactDevPath, reactDomPath,axiosPath,objectAssign]);
+var prodCode = fileUtils.concatFileContent([reactProdPath, reactDomPath, axiosPath]),
+    devCode = fileUtils.concatFileContent([reactDevPath, reactDomPath, axiosPath]);
 
 fsExtra.outputFile(
     path.join(distDir, 'wscn-react-vendor.min.js'),
-    prodCode,function () {
+    prodCode, function () {
 
     });
 
 fsExtra.outputFile(
     path.join(distDir, 'wscn-react-vendor.js'),
-    devCode,function () {
+    devCode, function () {
 
     });
 
