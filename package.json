@@ -1,6 +1,6 @@
 {
   "name": "wscn-react-vendor",
-  "version": "0.0.9",
+  "version": "0.0.11",
   "description": "wscn-react-vendor",
   "main": "dist/wscn-react-vendor.min",
   "scripts": {
