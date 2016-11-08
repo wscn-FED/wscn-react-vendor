@@ -1,10 +1,9 @@
 {
   "name": "wscn-react-vendor",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "wscn-react-vendor",
   "main": "dist/wscn-react-vendor.min",
   "scripts": {
-    "react": "node react.build.js",
     "build": "node build-core.js && gulp"
   },
   "keywords": [

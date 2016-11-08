@@ -22995,7 +22995,8 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 
 	__webpack_require__(1);
 	__webpack_require__(37);
-	module.exports = __webpack_require__(42);
+	__webpack_require__(42);
+	module.exports = __webpack_require__(48);
 
 
 /***/ },
@@ -23590,18 +23591,140 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	var LIBRARY            = __webpack_require__(43)
+	// 22.1.3.8 Array.prototype.find(predicate, thisArg = undefined)
+	var $export = __webpack_require__(2)
+	  , $find   = __webpack_require__(43)(5)
+	  , KEY     = 'find'
+	  , forced  = true;
+	// Shouldn't skip holes
+	if(KEY in [])Array(1)[KEY](function(){ forced = false; });
+	$export($export.P + $export.F * forced, 'Array', {
+	  find: function find(callbackfn/*, that = undefined */){
+	    return $find(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
+	  }
+	});
+	__webpack_require__(47)(KEY);
+
+/***/ },
+/* 43 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 0 -> Array#forEach
+	// 1 -> Array#map
+	// 2 -> Array#filter
+	// 3 -> Array#some
+	// 4 -> Array#every
+	// 5 -> Array#find
+	// 6 -> Array#findIndex
+	var ctx      = __webpack_require__(18)
+	  , IObject  = __webpack_require__(24)
+	  , toObject = __webpack_require__(36)
+	  , toLength = __webpack_require__(28)
+	  , asc      = __webpack_require__(44);
+	module.exports = function(TYPE, $create){
+	  var IS_MAP        = TYPE == 1
+	    , IS_FILTER     = TYPE == 2
+	    , IS_SOME       = TYPE == 3
+	    , IS_EVERY      = TYPE == 4
+	    , IS_FIND_INDEX = TYPE == 6
+	    , NO_HOLES      = TYPE == 5 || IS_FIND_INDEX
+	    , create        = $create || asc;
+	  return function($this, callbackfn, that){
+	    var O      = toObject($this)
+	      , self   = IObject(O)
+	      , f      = ctx(callbackfn, that, 3)
+	      , length = toLength(self.length)
+	      , index  = 0
+	      , result = IS_MAP ? create($this, length) : IS_FILTER ? create($this, 0) : undefined
+	      , val, res;
+	    for(;length > index; index++)if(NO_HOLES || index in self){
+	      val = self[index];
+	      res = f(val, index, O);
+	      if(TYPE){
+	        if(IS_MAP)result[index] = res;            // map
+	        else if(res)switch(TYPE){
+	          case 3: return true;                    // some
+	          case 5: return val;                     // find
+	          case 6: return index;                   // findIndex
+	          case 2: result.push(val);               // filter
+	        } else if(IS_EVERY)return false;          // every
+	      }
+	    }
+	    return IS_FIND_INDEX ? -1 : IS_SOME || IS_EVERY ? IS_EVERY : result;
+	  };
+	};
+
+/***/ },
+/* 44 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 9.4.2.3 ArraySpeciesCreate(originalArray, length)
+	var speciesConstructor = __webpack_require__(45);
+
+	module.exports = function(original, length){
+	  return new (speciesConstructor(original))(length);
+	};
+
+/***/ },
+/* 45 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var isObject = __webpack_require__(8)
+	  , isArray  = __webpack_require__(46)
+	  , SPECIES  = __webpack_require__(40)('species');
+
+	module.exports = function(original){
+	  var C;
+	  if(isArray(original)){
+	    C = original.constructor;
+	    // cross-realm fallback
+	    if(typeof C == 'function' && (C === Array || isArray(C.prototype)))C = undefined;
+	    if(isObject(C)){
+	      C = C[SPECIES];
+	      if(C === null)C = undefined;
+	    }
+	  } return C === undefined ? Array : C;
+	};
+
+/***/ },
+/* 46 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 7.2.2 IsArray(argument)
+	var cof = __webpack_require__(25);
+	module.exports = Array.isArray || function isArray(arg){
+	  return cof(arg) == 'Array';
+	};
+
+/***/ },
+/* 47 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 22.1.3.31 Array.prototype[@@unscopables]
+	var UNSCOPABLES = __webpack_require__(40)('unscopables')
+	  , ArrayProto  = Array.prototype;
+	if(ArrayProto[UNSCOPABLES] == undefined)__webpack_require__(5)(ArrayProto, UNSCOPABLES, {});
+	module.exports = function(key){
+	  ArrayProto[UNSCOPABLES][key] = true;
+	};
+
+/***/ },
+/* 48 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	var LIBRARY            = __webpack_require__(49)
 	  , global             = __webpack_require__(3)
 	  , ctx                = __webpack_require__(18)
-	  , classof            = __webpack_require__(44)
+	  , classof            = __webpack_require__(50)
 	  , $export            = __webpack_require__(2)
 	  , isObject           = __webpack_require__(8)
 	  , aFunction          = __webpack_require__(19)
-	  , anInstance         = __webpack_require__(45)
-	  , forOf              = __webpack_require__(46)
-	  , speciesConstructor = __webpack_require__(51)
-	  , task               = __webpack_require__(52).set
-	  , microtask          = __webpack_require__(55)()
+	  , anInstance         = __webpack_require__(51)
+	  , forOf              = __webpack_require__(52)
+	  , speciesConstructor = __webpack_require__(57)
+	  , task               = __webpack_require__(58).set
+	  , microtask          = __webpack_require__(61)()
 	  , PROMISE            = 'Promise'
 	  , TypeError          = global.TypeError
 	  , process            = global.process
@@ -23793,7 +23916,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	    this._h = 0;              // <- rejection state, 0 - default, 1 - handled, 2 - unhandled
 	    this._n = false;          // <- notify
 	  };
-	  Internal.prototype = __webpack_require__(56)($Promise.prototype, {
+	  Internal.prototype = __webpack_require__(62)($Promise.prototype, {
 	    // 25.4.5.3 Promise.prototype.then(onFulfilled, onRejected)
 	    then: function then(onFulfilled, onRejected){
 	      var reaction    = newPromiseCapability(speciesConstructor(this, $Promise));
@@ -23819,8 +23942,8 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	}
 
 	$export($export.G + $export.W + $export.F * !USE_NATIVE, {Promise: $Promise});
-	__webpack_require__(57)($Promise, PROMISE);
-	__webpack_require__(58)(PROMISE);
+	__webpack_require__(63)($Promise, PROMISE);
+	__webpack_require__(64)(PROMISE);
 	Wrapper = __webpack_require__(4)[PROMISE];
 
 	// statics
@@ -23844,7 +23967,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	    return capability.promise;
 	  }
 	});
-	$export($export.S + $export.F * !(USE_NATIVE && __webpack_require__(59)(function(iter){
+	$export($export.S + $export.F * !(USE_NATIVE && __webpack_require__(65)(function(iter){
 	  $Promise.all(iter)['catch'](empty);
 	})), PROMISE, {
 	  // 25.4.4.1 Promise.all(iterable)
@@ -23890,13 +24013,13 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	});
 
 /***/ },
-/* 43 */
+/* 49 */
 /***/ function(module, exports) {
 
 	module.exports = false;
 
 /***/ },
-/* 44 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// getting tag from 19.1.3.6 Object.prototype.toString()
@@ -23924,7 +24047,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	};
 
 /***/ },
-/* 45 */
+/* 51 */
 /***/ function(module, exports) {
 
 	module.exports = function(it, Constructor, name, forbiddenField){
@@ -23934,15 +24057,15 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	};
 
 /***/ },
-/* 46 */
+/* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var ctx         = __webpack_require__(18)
-	  , call        = __webpack_require__(47)
-	  , isArrayIter = __webpack_require__(48)
+	  , call        = __webpack_require__(53)
+	  , isArrayIter = __webpack_require__(54)
 	  , anObject    = __webpack_require__(7)
 	  , toLength    = __webpack_require__(28)
-	  , getIterFn   = __webpack_require__(50)
+	  , getIterFn   = __webpack_require__(56)
 	  , BREAK       = {}
 	  , RETURN      = {};
 	var exports = module.exports = function(iterable, entries, fn, that, ITERATOR){
@@ -23964,7 +24087,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	exports.RETURN = RETURN;
 
 /***/ },
-/* 47 */
+/* 53 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// call something on iterator step with safe closing on error
@@ -23981,11 +24104,11 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	};
 
 /***/ },
-/* 48 */
+/* 54 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// check on default Array iterator
-	var Iterators  = __webpack_require__(49)
+	var Iterators  = __webpack_require__(55)
 	  , ITERATOR   = __webpack_require__(40)('iterator')
 	  , ArrayProto = Array.prototype;
 
@@ -23994,18 +24117,18 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	};
 
 /***/ },
-/* 49 */
+/* 55 */
 /***/ function(module, exports) {
 
 	module.exports = {};
 
 /***/ },
-/* 50 */
+/* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var classof   = __webpack_require__(44)
+	var classof   = __webpack_require__(50)
 	  , ITERATOR  = __webpack_require__(40)('iterator')
-	  , Iterators = __webpack_require__(49);
+	  , Iterators = __webpack_require__(55);
 	module.exports = __webpack_require__(4).getIteratorMethod = function(it){
 	  if(it != undefined)return it[ITERATOR]
 	    || it['@@iterator']
@@ -24013,7 +24136,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	};
 
 /***/ },
-/* 51 */
+/* 57 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 7.3.20 SpeciesConstructor(O, defaultConstructor)
@@ -24026,12 +24149,12 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	};
 
 /***/ },
-/* 52 */
+/* 58 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var ctx                = __webpack_require__(18)
-	  , invoke             = __webpack_require__(53)
-	  , html               = __webpack_require__(54)
+	  , invoke             = __webpack_require__(59)
+	  , html               = __webpack_require__(60)
 	  , cel                = __webpack_require__(12)
 	  , global             = __webpack_require__(3)
 	  , process            = global.process
@@ -24106,7 +24229,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	};
 
 /***/ },
-/* 53 */
+/* 59 */
 /***/ function(module, exports) {
 
 	// fast apply, http://jsperf.lnkit.com/fast-apply/5
@@ -24127,17 +24250,17 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	};
 
 /***/ },
-/* 54 */
+/* 60 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__(3).document && document.documentElement;
 
 /***/ },
-/* 55 */
+/* 61 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var global    = __webpack_require__(3)
-	  , macrotask = __webpack_require__(52).set
+	  , macrotask = __webpack_require__(58).set
 	  , Observer  = global.MutationObserver || global.WebKitMutationObserver
 	  , process   = global.process
 	  , Promise   = global.Promise
@@ -24206,7 +24329,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	};
 
 /***/ },
-/* 56 */
+/* 62 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var redefine = __webpack_require__(15);
@@ -24216,7 +24339,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	};
 
 /***/ },
-/* 57 */
+/* 63 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var def = __webpack_require__(6).f
@@ -24228,7 +24351,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	};
 
 /***/ },
-/* 58 */
+/* 64 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24246,7 +24369,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	};
 
 /***/ },
-/* 59 */
+/* 65 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var ITERATOR     = __webpack_require__(40)('iterator')
